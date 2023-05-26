@@ -20,30 +20,24 @@ print("The loading of yaml files takes:", end_time - start_time, "seconds")
 print("Number of sources in the source list: {}".format(len(source_list)))
 S = np.zeros((len(source_list), 5), dtype=(object))
 print("Iterating over sources")
-count = 0 
-N_src = 0
-for source_name in sourcie_list:
-    if source_name[:3] == 'SNG':
-        print("Source name: {}".format(source_name))
-        for i, component in enumerate(source_list[source_name]):     
-            if "point" in component["comp_type"]:
-                # Do stuff with point components here.
-                S[count, 0] = source_name
-                S[count, 1] =  component["ra"]
-                S[count, 2] =  component["dec"]
-     
-            if "power_law" in component["flux_type"]:
-                pl = component["flux_type"]["power_law"]
-                S[count, 3] = pl["fd"]['freq']
-                S[count, 4] = pl["fd"]['i']
-           
-            count = count +1
+
+count = 0
+Nsrc = 0
+for source_name in source_list:
+    for i, component in enumerate(source_list[source_name]):
+        if component['comp_type'] == 'point':
+            flux_list = component['flux_type']['list']
+            for j in range(len(flux_list)):
+                if flux_list[j]['freq'] == 152e6:
+                    S[count, 0] = source_name
+                    S[count, 1] =  component["ra"]
+                    S[count, 2] =  component["dec"]
+                    S[count, 3] = flux_list['freq']
+                    S[count, 4] = flux_list['i']
+                    count += 1
+                    Nsrc += 1
+   
         print("------------------------------------------------")
 
-        N_src+= 1    
-
-S = np.delete(S, np.where(S[:,3] == 0)[0], axis=0) # to remove the rows where the frequency is not measured.
 S = np.delete(S, np.where(S[:,0] == 0)[0], axis=0)
-S1 = np.delete(S, np.where(S[:,4] < 1)[0], axis=0)
-print("Number of interested sources in the source list: {}".format(len(S1)))
-np.save(args.outfile, S1)
+np.save(args.outfile, S)
