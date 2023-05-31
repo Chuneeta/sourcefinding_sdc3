@@ -7,10 +7,9 @@ import time
 parser=ArgumentParser(description='reading pyaml file')
 parser.add_argument('fl', type=str, help='Name of input catalogue')
 parser.add_argument('--outfile', type=str, help='Name of output catalogue', default='lobes_psource_catalogue')
-args = parser.parse_args(
+args = parser.parse_args()
 
 start_time = time.perf_counter()
-
 with open(args.fl, "r") s h:
 	source_list = yaml.load(h, Loader=yaml.SafeLoader)
 
